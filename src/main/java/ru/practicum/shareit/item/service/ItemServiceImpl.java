@@ -11,8 +11,6 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.item.ItemMapper.toItem;
 import static ru.practicum.shareit.item.ItemMapper.toItemDto;
@@ -30,11 +28,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAll(Long userId) {
-        List<Item> items = itemStorage.getAll().stream()
-                .filter(i -> userId.equals(i.getId()))
-                .collect(Collectors.toList());
         List<ItemDto> ownerItems = new ArrayList<>();
-        items.forEach(i -> ownerItems.add(toItemDto(i)));
+        for (Item i : itemStorage.getAll()) {
+            if (i.getOwner() != null && userId.equals(i.getOwner().getId())) {
+                ownerItems.add(toItemDto(i));
+            }
+        }
         log.info("Список вещей владельца с id {} успешно отправлен", userId);
         return ownerItems;
     }
@@ -58,28 +57,24 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto update(ItemDto itemDto, Long id, Long userId) {
-        Optional<ItemDto> founded = Optional.empty();
-        for (ItemDto iDto : getAll(userId)) {
-            if (id.equals(iDto.getId())) {
-                log.info("Вещь для обновления найдена у владельца");
-                founded = Optional.of(iDto);
-            }
-        }
-        if (founded.isEmpty()) {
+        Item founded = itemStorage.get(id)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + id));
+        if (founded.getOwner() != null && !founded.getOwner().getId().equals(userId)) {
             throw new NotFoundException("У пользователя с id = " + userId + "нет вещи с id = " + id);
         }
+
         if (itemDto.getName() != null) {
-            founded.get().setName(itemDto.getName());
+            founded.setName(itemDto.getName());
         }
         if (itemDto.getDescription() != null) {
-            founded.get().setDescription(itemDto.getDescription());
+            founded.setDescription(itemDto.getDescription());
         }
         if (itemDto.getAvailable() != null) {
-            founded.get().setAvailable(itemDto.getAvailable());
+            founded.setAvailable(itemDto.getAvailable());
         }
-        founded.get().setId(id);
-        itemStorage.update(toItem(founded.get()));
-        return founded.get();
+        founded.setId(id);
+        itemStorage.update(founded);
+        return toItemDto(founded);
     }
 
     @Override
