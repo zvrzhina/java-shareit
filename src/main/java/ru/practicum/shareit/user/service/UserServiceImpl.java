@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.practicum.shareit.user.UserMapper.toUserDto;
+import static ru.practicum.shareit.user.UserMapper.*;
 
 @Service
 @Slf4j
