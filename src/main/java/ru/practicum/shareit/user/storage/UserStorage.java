@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface UserStorage {
+    // Todo: remove
     Collection<User> findAll();
 
     Optional<User> findById(Long id);

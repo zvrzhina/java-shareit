@@ -13,5 +13,7 @@ public interface ItemService {
 
     ItemDto update(ItemDto itemDto, Long id, Long userId);
 
+    void delete(Long id);
+
     List<ItemDto> search(String text);
 }

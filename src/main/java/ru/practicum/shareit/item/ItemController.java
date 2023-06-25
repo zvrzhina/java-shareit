@@ -52,6 +52,12 @@ public class ItemController {
         return itemService.update(itemDto, id, userId);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        log.info("Получен запрос DELETE /items/id");
+        itemService.delete(id);
+    }
+
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
         log.info("Получен запрос PATCH /items/search");
