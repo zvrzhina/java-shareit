@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.EmailIsNotUniqueException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -13,6 +12,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.practicum.shareit.user.UserMapper.toUser;
 import static ru.practicum.shareit.user.UserMapper.toUserDto;
 
 @Service
@@ -46,15 +46,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto add(User user) {
-        checkIsEmailUnique(user);
+    public UserDto add(UserDto userDto) {
+        User user = toUser(userDto);
+        //checkIsEmailUnique(user);
         log.info("Пользователь с id = {} успешно добавлен", user.getId());
         return toUserDto(userRepository.save(user));
     }
 
     @Override
     @Transactional
-    public UserDto update(User user, long id) {
+    public UserDto update(UserDto userDto, long id) {
+        User user = toUser(userDto);
         user.setId(id);
         User updatedUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(USER_NOT_EXISTS_MSG, user.getId())));
@@ -62,7 +64,6 @@ public class UserServiceImpl implements UserService {
             updatedUser.setName(user.getName());
         }
         if (user.getEmail() != null && !user.getEmail().equals(updatedUser.getEmail())) {
-            checkIsEmailUnique(user);
             updatedUser.setEmail(user.getEmail());
         }
         log.info("Пользователь с id = {} успешно обновлен", user.getId());
@@ -77,11 +78,4 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private void checkIsEmailUnique(User user) {
-        for (User u : userRepository.findAll()) {
-            if (user.getEmail().equals(u.getEmail())) {
-                throw new EmailIsNotUniqueException(String.format("Пользователь с таким email {} уже зарегистрирован", user.getEmail()));
-            }
-        }
-    }
 }

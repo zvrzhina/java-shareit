@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
@@ -40,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto add(@Validated @RequestBody User user, Errors errors) {
+    public UserDto add(@Validated @RequestBody UserDto user, Errors errors) {
         log.info("Получен запрос POST /users/");
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
@@ -50,7 +49,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@RequestBody User newUser, @PathVariable long id, Errors errors) {
+    public UserDto update(@RequestBody UserDto newUser, @PathVariable long id, Errors errors) {
         log.info("Получен запрос PATCH /users/id");
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());

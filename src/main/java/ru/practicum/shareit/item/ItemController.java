@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -30,9 +31,9 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getById(@PathVariable Long id) {
+    public ItemDto getById(@PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос GET /items/id");
-        return itemService.get(id);
+        return itemService.getById(id, userId);
     }
 
     @PostMapping
@@ -46,8 +47,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long id,
-                          @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос PATCH /items/id");
         return itemService.update(itemDto, id, userId);
     }
@@ -62,5 +62,11 @@ public class ItemController {
     public List<ItemDto> search(@RequestParam String text) {
         log.info("Получен запрос PATCH /items/search");
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId,
+                                  @Valid @RequestBody CommentDto commentDto) {
+        return itemService.postComment(itemId, userId, commentDto);
     }
 }

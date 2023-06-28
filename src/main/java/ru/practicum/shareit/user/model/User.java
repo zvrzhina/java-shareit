@@ -32,6 +32,6 @@ public class User {
 
     @NotBlank(message = "Email обязателен")
     @Email(message = "Неверный email")
-    @Column(name = "email", length = 40, nullable = false)
+    @Column(unique = true, name = "email", length = 40, nullable = false)
     private String email;
 }
