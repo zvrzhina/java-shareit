@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import static ru.practicum.shareit.user.UserMapper.toUserDto;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private static final String USER_NOT_EXISTS_MSG = "Пользователь с id = %d не существует";
     private final UserRepository userRepository;
