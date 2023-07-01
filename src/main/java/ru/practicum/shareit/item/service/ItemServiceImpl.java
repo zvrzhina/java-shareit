@@ -45,24 +45,26 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemDto> getAll(Long userId) {
-        List<ItemDto> ownerItems = new ArrayList<>();
-        for (Item i : itemRepository.findAllByOwnerIdOrderByIdAsc(userId)) {
-            ItemDto itemDto = toItemDto(i);
-            Booking lastBooking = bookingRepository.findLastBooking(LocalDateTime.now(), userId, i.getId()).stream().findFirst().orElse(null);
-            Booking nextBooking = bookingRepository.findNextBooking(LocalDateTime.now(), userId, i.getId()).stream().findFirst().orElse(null);
+        List<Item> ownerItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+        List<ItemDto> ownerItemDtoList = ownerItems
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
 
+        ownerItemDtoList.forEach(itemDto -> {
+            Booking lastBooking = bookingRepository.findLastBooking(LocalDateTime.now(), userId, itemDto.getId()).stream().findFirst().orElse(null);
             itemDto.setLastBooking(lastBooking == null ? null : toBookingRequestDto(lastBooking));
+
+            Booking nextBooking = bookingRepository.findNextBooking(LocalDateTime.now(), userId, itemDto.getId()).stream().findFirst().orElse(null);
             itemDto.setNextBooking(nextBooking == null ? null : toBookingRequestDto(nextBooking));
 
             itemDto.setComments(commentRepository.findAllByItemId(itemDto.getId())
                     .stream()
                     .map(CommentMapper::toCommentDto)
                     .collect(Collectors.toList()));
-
-            ownerItems.add(itemDto);
-        }
+        });
         log.info("Список вещей владельца с id {} успешно отправлен", userId);
-        return ownerItems;
+        return ownerItemDtoList;
     }
 
     @Override
