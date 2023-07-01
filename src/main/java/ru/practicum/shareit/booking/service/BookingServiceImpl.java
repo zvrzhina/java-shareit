@@ -29,12 +29,11 @@ import static ru.practicum.shareit.booking.BookingMapper.toBookingDto;
 @Slf4j
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
+    private static final String UNSUPPORTED_STATUS = "Unknown state: UNSUPPORTED_STATUS";
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-
-    private static final String UNSUPPORTED_STATUS = "Unknown state: UNSUPPORTED_STATUS";
 
     @Override
     @Transactional
