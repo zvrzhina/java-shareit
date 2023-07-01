@@ -57,5 +57,4 @@ public class BookingController {
         log.info("Получен запрос GET /bookings/owner?state=" + state);
         return bookingService.getAllByOwner(userId, state);
     }
-    
 }
