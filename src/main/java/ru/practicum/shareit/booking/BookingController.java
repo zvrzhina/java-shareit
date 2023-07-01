@@ -2,13 +2,11 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.ErrorResponse;
 import ru.practicum.shareit.exception.ValidationException;
 
 import javax.validation.Valid;
@@ -59,10 +57,5 @@ public class BookingController {
         log.info("Получен запрос GET /bookings/owner?state=" + state);
         return bookingService.getAllByOwner(userId, state);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectParameterException(ValidationException e) {
-        return new ErrorResponse(e.getMessage());
-    }
+    
 }
