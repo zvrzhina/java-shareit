@@ -1,7 +1,8 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.validation.Marker;
@@ -13,7 +14,8 @@ import java.util.List;
 /**
  * TODO Sprint add-controllers.
  */
-@Data
+@Getter
+@Setter
 @Builder(toBuilder = true)
 public class ItemDto {
     private Long id;
