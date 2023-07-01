@@ -32,7 +32,6 @@
 			<property name="format" value="^[ \t]*[{]"/>
 			<property name="ignoreComments" value="true"/>
 			<property name="message" value="Leading braces"/>
-			<property name="message" value="Line has trailing spaces."/>
 		</module>
 
 		<module name="LeftCurly"/>
