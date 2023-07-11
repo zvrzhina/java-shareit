@@ -2,10 +2,13 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
+@Validated
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
@@ -30,13 +34,14 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getById(@PathVariable Long id) {
+    public ItemDto getById(@PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос GET /items/id");
-        return itemService.get(id);
+        return itemService.getById(id, userId);
     }
 
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto, Errors errors) {
+    @Validated({Marker.OnCreate.class})
+    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId, Errors errors) {
         log.info("Получен запрос POST /items");
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
@@ -46,15 +51,26 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long id,
-                          @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto update(@Valid @RequestBody ItemDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос PATCH /items/id");
         return itemService.update(itemDto, id, userId);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        log.info("Получен запрос DELETE /items/id");
+        itemService.delete(id);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
         log.info("Получен запрос PATCH /items/search");
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId,
+                                  @Valid @RequestBody CommentDto commentDto) {
+        return itemService.postComment(itemId, userId, commentDto);
     }
 }
