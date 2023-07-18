@@ -21,6 +21,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -143,19 +144,20 @@ public class ItemControllerTests {
     }
 
     @Test
-    void createCommentTest() {
+    void createCommentTest() throws InterruptedException {
         userController.add(userDto, errors);
         UserDto second = userController.add(secondUserDto, errors);
         ItemDto item = itemController.create(itemDto, 1L, errors);
 
         bookingController.create(BookingRequestDto.builder()
-                        .start(LocalDateTime.of(2023, 6, 16, 10, 10))
-                        .end(LocalDateTime.of(2023, 6, 18, 10, 10))
+                        .start(LocalDateTime.now().plusSeconds(1))
+                        .end(LocalDateTime.now().plusSeconds(2))
                         .itemId(item.getId())
                         .bookerId(second.getId())
                         .build(),
                 second.getId(), errors);
         bookingController.approve(1L, 1L, true);
+        TimeUnit.SECONDS.sleep(2);
         itemController.postComment(item.getId(), second.getId(), commentDto);
         assertEquals(commentDto.getText(), itemController.getById(1L, 1L).getComments().get(0).getText());
     }
