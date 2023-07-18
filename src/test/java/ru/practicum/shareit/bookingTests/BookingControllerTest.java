@@ -17,6 +17,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,7 +82,7 @@ public class BookingControllerTest {
 
     @Test
     void createByIncorrectUserTest() {
-        assertThrows(NotFoundException.class, () -> bookingController.create(bookingRequestDto, 1L, errors));
+        assertThrows(ConstraintViolationException.class, () -> bookingController.create(bookingRequestDto, 1L, errors));
     }
 
     @Test
