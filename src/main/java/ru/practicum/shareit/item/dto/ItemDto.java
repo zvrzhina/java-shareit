@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.constraints.NotBlank;
@@ -16,6 +13,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
+@AllArgsConstructor
 @Builder(toBuilder = true)
 public class ItemDto {
     private Long id;
@@ -30,7 +29,7 @@ public class ItemDto {
     @NotNull(groups = Marker.OnCreate.class)
     private Boolean available;
 
-    private ItemRequest request;
+    private Long requestId;
 
     private BookingRequestDto lastBooking;
 

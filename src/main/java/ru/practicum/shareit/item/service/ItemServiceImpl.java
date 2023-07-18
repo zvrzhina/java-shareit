@@ -18,6 +18,7 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.utils.CommonUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,8 +45,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> getAll(Long userId) {
-        List<Item> ownerItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+    public List<ItemDto> getAll(Long userId, int from, int size) {
+        List<Item> ownerItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, CommonUtils.getPageRequest(from, size));
         List<ItemDto> ownerItemDtoList = ownerItems
                 .stream()
                 .map(ItemMapper::toItemDto)
@@ -127,17 +128,19 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public void delete(Long id) {
+        Item founded = itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + id));
         itemRepository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, int from, int size) {
         List<ItemDto> founded = new ArrayList<>();
         if (text.isBlank()) {
             return founded;
         }
-        return itemRepository.search(text)
+        return itemRepository.search(text, CommonUtils.getPageRequest(from, size))
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(toList());

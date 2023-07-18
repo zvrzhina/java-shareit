@@ -10,6 +10,8 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.ValidationException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -46,15 +48,23 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @RequestParam(defaultValue = "ALL") String state) {
+                                         @RequestParam(defaultValue = "ALL") String state,
+                                         @RequestParam(value = "from", defaultValue = "0")
+                                         @PositiveOrZero int from,
+                                         @RequestParam(value = "size", defaultValue = "10")
+                                         @Positive int size) {
         log.info("Получен запрос GET /bookings/?state=" + state);
-        return bookingService.getAllByUser(userId, state);
+        return bookingService.getAllByUser(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam(defaultValue = "ALL") String state) {
+                                          @RequestParam(defaultValue = "ALL") String state,
+                                          @RequestParam(value = "from", defaultValue = "0")
+                                          @PositiveOrZero int from,
+                                          @RequestParam(value = "size", defaultValue = "10")
+                                          @Positive int size) {
         log.info("Получен запрос GET /bookings/owner?state=" + state);
-        return bookingService.getAllByOwner(userId, state);
+        return bookingService.getAllByOwner(userId, state, from, size);
     }
 }

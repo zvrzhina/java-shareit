@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -28,9 +30,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Получен запрос GET /items");
-        return itemService.getAll(userId);
+        return itemService.getAll(userId, from, size);
     }
 
     @GetMapping("/{id}")
@@ -63,9 +67,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text) {
+    public List<ItemDto> search(@RequestParam String text,
+                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Получен запрос PATCH /items/search");
-        return itemService.search(text);
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
