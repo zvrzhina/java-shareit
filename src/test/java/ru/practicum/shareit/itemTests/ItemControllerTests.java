@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 import ru.practicum.shareit.booking.BookingController;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -76,7 +77,13 @@ public class ItemControllerTests {
     }
 
     @Test
-    void createByIncorrectUser() {
+    void createByIncorrectUserTest() {
+        assertThrows(NotFoundException.class, () -> itemController.create(itemDto, 1L, errors));
+    }
+
+    @Test
+    void createWithIncorrectRequestTest() {
+        itemDto.setRequestId(99L);
         assertThrows(NotFoundException.class, () -> itemController.create(itemDto, 1L, errors));
     }
 
@@ -125,12 +132,12 @@ public class ItemControllerTests {
     }
 
     @Test
-    void searchWithNegativeFrom() {
+    void searchWithNegativeFromTest() {
         assertThrows(ConstraintViolationException.class, () -> itemController.search("text", -1, 10));
     }
 
     @Test
-    void searchWithNegativeAndZeroSize() {
+    void searchWithNegativeAndZeroSizeTest() {
         assertThrows(ConstraintViolationException.class, () -> itemController.search("text", 0, -10));
         assertThrows(ConstraintViolationException.class, () -> itemController.search("text", 0, 0));
     }
@@ -163,13 +170,22 @@ public class ItemControllerTests {
     }
 
     @Test
-    void createCommentByIncorrectUser() {
+    void createCommentByIncorrectUserTest() {
         assertThrows(NotFoundException.class, () -> itemController.postComment(1L, 2L, commentDto));
     }
 
     @Test
-    void createCommentForIncorrectItem() {
+    void createCommentForIncorrectItemTest() {
         assertThrows(NotFoundException.class, () -> itemController.postComment(2L, 1L, commentDto));
+    }
+
+    @Test
+    void userCantPostCommentIfHeDidntBookItemTest() {
+        userController.add(userDto, errors);
+        UserDto second = userController.add(secondUserDto, errors);
+        ItemDto item = itemController.create(itemDto, 1L, errors);
+
+        assertThrows(ValidationException.class, () -> itemController.postComment(item.getId(), second.getId(), commentDto));
     }
 
 }

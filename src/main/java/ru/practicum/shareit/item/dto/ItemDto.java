@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.validation.Marker;
 
@@ -13,7 +16,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class ItemDto {
