@@ -1,4 +1,4 @@
-package ru.practicum.shareit.itemTests;
+package ru.practicum.shareit.commentTest;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
