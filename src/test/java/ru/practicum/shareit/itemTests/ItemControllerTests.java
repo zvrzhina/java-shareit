@@ -14,8 +14,9 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.request.ItemRequestController;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -43,12 +44,12 @@ public class ItemControllerTests {
     @Autowired
     private ItemRequestController itemRequestController;
 
-    private ItemDto itemDto;
+    private ItemRequestDto itemDto;
 
     private UserDto userDto;
     private UserDto secondUserDto;
 
-    private ItemRequestDto itemRequestDto;
+    private RequestDto requestDto;
 
     private CommentDto commentDto;
 
@@ -57,12 +58,12 @@ public class ItemControllerTests {
     @BeforeEach
     void init() {
 
-        itemDto = new ItemDto(
-                null, "item", "desc", true, null, null, null, null);
+        itemDto = new ru.practicum.shareit.item.dto.ItemRequestDto(
+                null, "item", "desc", true, null, null);
 
         userDto = new UserDto(null, "Oleg", "oleg@mail.ru");
         secondUserDto = new UserDto(null, "OlegOleg", "olegOlegovoch@mail.ru");
-        itemRequestDto = new ItemRequestDto(null, "itemDescription", null, null);
+        requestDto = new RequestDto(null, "itemDescription", null, null);
         commentDto = new CommentDto(null, "comment", null, null);
 
 
@@ -92,8 +93,8 @@ public class ItemControllerTests {
     void updateTest() {
         UserDto user = userController.add(userDto, errors);
         itemController.create(itemDto, 1L, errors);
-        ItemDto updatedItem = new ItemDto(
-                null, "Updated", "Updated", true, null, null, null, null);
+        ItemRequestDto updatedItem = new ItemRequestDto(
+                null, "Updated", "Updated", true, null, null);
         itemController.update(updatedItem, 1L, 1L);
         assertEquals(updatedItem.getName(), itemController.getById(1L, 1L).getName());
     }

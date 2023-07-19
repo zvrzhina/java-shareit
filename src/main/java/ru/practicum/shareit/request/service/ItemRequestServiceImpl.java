@@ -8,7 +8,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequestMapper;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
@@ -35,10 +35,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional
     @Override
-    public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
+    public RequestDto create(Long userId, RequestDto requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id {} не существует" + userId)));
-        ItemRequest itemRequest = toItemRequest(itemRequestDto);
+        ItemRequest itemRequest = toItemRequest(requestDto);
         itemRequest.setCreated(LocalDateTime.now());
         itemRequest.setRequestor(user);
         itemRequestRepository.save(itemRequest);
@@ -48,10 +48,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemRequestDto> getAllByUser(Long userId) {
+    public List<RequestDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id {} не существует" + userId)));
-        List<ItemRequestDto> itemRequestsDto = itemRequestRepository.findAllByRequestorIdOrderByCreatedAsc(userId)
+        List<RequestDto> itemRequestsDto = itemRequestRepository.findAllByRequestorIdOrderByCreatedAsc(userId)
                 .stream()
                 .map(ItemRequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());
@@ -62,11 +62,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemRequestDto> getAll(Long userId, int from, int size) {
+    public List<RequestDto> getAll(Long userId, int from, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id {} не существует" + userId)));
 
-        List<ItemRequestDto> itemRequestsDto = itemRequestRepository.findAllByRequestorIdNotLike(userId, getPageRequest(from, size))
+        List<RequestDto> itemRequestsDto = itemRequestRepository.findAllByRequestorIdNotLike(userId, getPageRequest(from, size))
                 .stream()
                 .map(ItemRequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());
@@ -76,20 +76,20 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional(readOnly = true)
     @Override
-    public ItemRequestDto getById(Long userId, Long requestId) {
+    public RequestDto getById(Long userId, Long requestId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id {} не существует" + userId)));
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException(String.format("Запроса с id {} не существует" + requestId)));
-        ItemRequestDto itemRequestDto = toItemRequestDto(itemRequest);
-        setItemsToItemRequestDto(itemRequestDto);
+        RequestDto requestDto = toItemRequestDto(itemRequest);
+        setItemsToItemRequestDto(requestDto);
 
-        return itemRequestDto;
+        return requestDto;
     }
 
 
-    private void setItemsToItemRequestDto(ItemRequestDto itemRequestDto) {
-        itemRequestDto.setItems(itemRepository.findAllByRequestId(itemRequestDto.getId())
+    private void setItemsToItemRequestDto(RequestDto requestDto) {
+        requestDto.setItems(itemRepository.findAllByRequestId(requestDto.getId())
                 .stream()
                 .map(ItemMapper::toItemResponseDto)
                 .collect(Collectors.toList()));

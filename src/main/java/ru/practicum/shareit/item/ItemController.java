@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
@@ -45,7 +46,7 @@ public class ItemController {
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId, Errors errors) {
+    public ItemDto create(@Valid @RequestBody ItemRequestDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId, Errors errors) {
         log.info("Получен запрос POST /items");
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
@@ -55,7 +56,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto update(@Valid @RequestBody ItemDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto update(@Valid @RequestBody ItemRequestDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос PATCH /items/id");
         return itemService.update(itemDto, id, userId);
     }

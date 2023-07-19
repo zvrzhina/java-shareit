@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.request.ItemRequestController;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
@@ -37,26 +37,26 @@ public class ItemRequestControllerMockTest {
     @Autowired
     private MockMvc mvc;
 
-    private ItemRequestDto itemRequestDto;
+    private RequestDto requestDto;
 
     @BeforeEach
     void init() {
-        itemRequestDto = new ItemRequestDto(1L, "testDescription", null, null);
+        requestDto = new RequestDto(1L, "testDescription", null, null);
     }
 
     @Test
     void createTest() throws Exception {
         when(itemRequestService.create(anyLong(), any()))
-                .thenReturn(itemRequestDto);
+                .thenReturn(requestDto);
 
         mvc.perform(post("/requests")
-                        .content(mapper.writeValueAsString(itemRequestDto))
+                        .content(mapper.writeValueAsString(requestDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(itemRequestDto)));
+                .andExpect(content().json(mapper.writeValueAsString(requestDto)));
 
         Mockito.verify(itemRequestService, Mockito.times(1))
                 .create(anyLong(), any());
@@ -65,7 +65,7 @@ public class ItemRequestControllerMockTest {
     @Test
     void getAllByUserTest() throws Exception {
         when(itemRequestService.getAllByUser(anyLong()))
-                .thenReturn(List.of(itemRequestDto));
+                .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -73,7 +73,7 @@ public class ItemRequestControllerMockTest {
                         .header("X-Sharer-User-Id", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(List.of(itemRequestDto))));
+                .andExpect(content().json(mapper.writeValueAsString(List.of(requestDto))));
 
         Mockito.verify(itemRequestService, Mockito.times(1))
                 .getAllByUser(anyLong());
@@ -82,7 +82,7 @@ public class ItemRequestControllerMockTest {
     @Test
     void getAllTest() throws Exception {
         when(itemRequestService.getAll(anyLong(), anyInt(), anyInt()))
-                .thenReturn(List.of(itemRequestDto));
+                .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/requests/all")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -90,7 +90,7 @@ public class ItemRequestControllerMockTest {
                         .header("X-Sharer-User-Id", 2L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(List.of(itemRequestDto))));
+                .andExpect(content().json(mapper.writeValueAsString(List.of(requestDto))));
 
         Mockito.verify(itemRequestService, Mockito.times(1))
                 .getAll(anyLong(), anyInt(), anyInt());
@@ -99,7 +99,7 @@ public class ItemRequestControllerMockTest {
     @Test
     void getByIdTest() throws Exception {
         when(itemRequestService.getById(anyLong(), anyLong()))
-                .thenReturn(itemRequestDto);
+                .thenReturn(requestDto);
 
         mvc.perform(get("/requests/1")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -107,7 +107,7 @@ public class ItemRequestControllerMockTest {
                         .header("X-Sharer-User-Id", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(itemRequestDto)));
+                .andExpect(content().json(mapper.writeValueAsString(requestDto)));
 
         Mockito.verify(itemRequestService, Mockito.times(1))
                 .getById(anyLong(), anyLong());

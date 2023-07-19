@@ -1,23 +1,23 @@
 package ru.practicum.shareit.request;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.ArrayList;
 
 @UtilityClass
 public class ItemRequestMapper {
-    public static ItemRequest toItemRequest(ItemRequestDto itemRequestDto) {
+    public static ItemRequest toItemRequest(RequestDto requestDto) {
         return ItemRequest
                 .builder()
-                .id(itemRequestDto.getId())
-                .description(itemRequestDto.getDescription())
+                .id(requestDto.getId())
+                .description(requestDto.getDescription())
                 .build();
     }
 
-    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
-        return ItemRequestDto
+    public static RequestDto toItemRequestDto(ItemRequest itemRequest) {
+        return RequestDto
                 .builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())

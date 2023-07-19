@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.validation.Marker.OnCreate;
 
 import javax.validation.constraints.NotBlank;
@@ -15,7 +14,7 @@ import java.util.List;
 @Setter
 @Builder
 @AllArgsConstructor
-public class ItemRequestDto {
+public class RequestDto {
     private Long id;
 
     @NotBlank(groups = {OnCreate.class})
@@ -23,5 +22,5 @@ public class ItemRequestDto {
 
     private LocalDateTime created;
 
-    private List<ItemResponseDto> items;
+    private List<ru.practicum.shareit.item.dto.ItemRequestDto> items;
 }

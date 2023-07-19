@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -96,14 +97,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto add(ItemDto itemDto, Long userId) {
+    public ItemDto add(ItemRequestDto itemRequestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id {} не существует" + userId)));
-        Item item = toItem(itemDto);
+        Item item = toItem(itemRequestDto);
         item.setOwner(user);
-        if (itemDto.getRequestId() != null) {
-            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
-                    .orElseThrow(() -> new NotFoundException(String.format("Реквест с id {} не найден", itemDto.getRequestId())));
+        if (itemRequestDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemRequestDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException(String.format("Реквест с id {} не найден", itemRequestDto.getRequestId())));
             item.setRequest(itemRequest);
         }
         itemRepository.save(item);
@@ -112,7 +113,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto update(ItemDto itemDto, Long id, Long userId) {
+    public ItemDto update(ItemRequestDto itemDto, Long id, Long userId) {
         Item founded = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + id));
         if (founded.getOwner() != null && !userId.equals(founded.getOwner().getId())) {

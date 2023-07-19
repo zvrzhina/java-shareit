@@ -15,7 +15,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public class BookingControllerMockTest {
 
     private UserDto userDto;
 
-    private ItemDto itemDto;
+    private ItemRequestDto itemRequestDto;
 
     private BookingDto bookingDto;
 
@@ -51,7 +51,7 @@ public class BookingControllerMockTest {
 
     @BeforeEach
     void init() {
-        itemDto = new ItemDto(1L, "item", "desc", true, null, null, null, null);
+        itemRequestDto = new ItemRequestDto(1L, "item", null, true, null, null);
         userDto = new UserDto(1L, "Oleg", "oleg@mail.ru");
 
         bookingDto = BookingDto
@@ -60,7 +60,7 @@ public class BookingControllerMockTest {
                 .start(LocalDateTime.of(2025, 6, 16, 10, 10))
                 .end(LocalDateTime.of(2025, 6, 18, 10, 10))
                 .booker(toUser(userDto))
-                .item(toItem(itemDto))
+                .item(toItem(itemRequestDto))
                 .build();
 
         bookingRequestDto = BookingRequestDto.builder()

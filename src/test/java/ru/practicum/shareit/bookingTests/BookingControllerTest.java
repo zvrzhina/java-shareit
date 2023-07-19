@@ -14,6 +14,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -35,7 +36,7 @@ public class BookingControllerTest {
     @Autowired
     private ItemController itemController;
 
-    private ItemDto itemDto;
+    private ItemRequestDto itemDto;
 
     private UserDto userDto;
 
@@ -47,8 +48,8 @@ public class BookingControllerTest {
 
     @BeforeEach
     void init() {
-        itemDto = new ItemDto(
-                null, "item", "desc", true, null, null, null, null);
+        itemDto = new ItemRequestDto(
+                null, "item", "desc", true, null, null);
 
         userDto = new UserDto(null, "Oleg", "oleg@mail.ru");
         secondUserDto = new UserDto(null, "OlegOleg", "olegOlegovoch@mail.ru");
