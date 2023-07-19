@@ -30,10 +30,11 @@
 			<property name="option" value="TEXT"/>
 			<property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
 		</module>
-		<module name="RegexpSinglelineJava">
-			<property name="format" value="^[ \t]*[{]"/>
-			<property name="ignoreComments" value="true"/>
-			<property name="message" value="Leading braces"/>
+		<module name="RegexpSingleline">
+			<property name="format" value="(?!\*)[^$]\s+$"/>
+			<property name="minimum" value="0"/>
+			<property name="maximum" value="0"/>
+			<property name="message" value="Line has trailing spaces."/>
 		</module>
 
 		<module name="LeftCurly"/>
