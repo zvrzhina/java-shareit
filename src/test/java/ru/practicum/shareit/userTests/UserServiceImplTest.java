@@ -82,5 +82,4 @@ public class UserServiceImplTest {
         Mockito.verify(userRepository, Mockito.times(1))
                 .findAll();
     }
-    
 }
