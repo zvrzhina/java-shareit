@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Builder(toBuilder = true)
 public class ItemRequestDto {
     private Long id;
-    
+
     @NotNull(groups = Marker.OnCreate.class)
     @NotBlank(groups = Marker.OnCreate.class)
     private String name;
@@ -29,5 +29,4 @@ public class ItemRequestDto {
     private Long requestId;
 
     private Long ownerId;
-
 }
