@@ -17,6 +17,7 @@ import static ru.practicum.shareit.user.UserMapper.toUserDto;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private static final String USER_NOT_EXISTS_MSG = "Пользователь с id = %d не существует";
@@ -24,7 +25,6 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         log.info("Список всех пользователей успешно отправлен");
         List<UserDto> users = new ArrayList<>();
@@ -35,7 +35,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserDto get(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() ->

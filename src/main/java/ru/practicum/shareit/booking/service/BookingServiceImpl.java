@@ -28,6 +28,7 @@ import static ru.practicum.shareit.utils.CommonUtils.getPageRequest;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private static final String UNSUPPORTED_STATUS = "Unknown state: UNSUPPORTED_STATUS";
@@ -88,7 +89,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public BookingDto getById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Нет бронирования с id " + bookingId));
@@ -100,7 +100,6 @@ public class BookingServiceImpl implements BookingService {
         return toBookingDto(booking);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllByUser(Long userId, String state, int from, int size) {
         User user = userRepository.findById(userId)
@@ -144,7 +143,6 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllByOwner(Long userId, String state, int from, int size) {
 
@@ -201,6 +199,4 @@ public class BookingServiceImpl implements BookingService {
                 return bookings;
         }
     }
-
-
 }

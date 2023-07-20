@@ -24,6 +24,7 @@ import static ru.practicum.shareit.utils.CommonUtils.getPageRequest;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final UserRepository userRepository;
@@ -46,7 +47,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return toItemRequestDto(itemRequest);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<RequestDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -60,7 +60,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestsDto;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<RequestDto> getAll(Long userId, int from, int size) {
         User user = userRepository.findById(userId)
@@ -74,7 +73,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestsDto;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public RequestDto getById(Long userId, Long requestId) {
         User user = userRepository.findById(userId)

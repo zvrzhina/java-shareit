@@ -38,6 +38,7 @@ import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 @AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
@@ -48,7 +49,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public List<ItemDto> getAll(Long userId, int from, int size) {
         List<Item> ownerItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, CommonUtils.getPageRequest(from, size));
         List<ItemDto> ownerItemDtoList = ownerItems
@@ -73,7 +73,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ItemDto getById(Long id, Long userId) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Вещь с id {} не найдена", id)));
@@ -143,7 +142,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ItemDto> search(String text, int from, int size) {
         List<ItemDto> founded = new ArrayList<>();
         if (text.isBlank()) {
@@ -174,5 +172,4 @@ public class ItemServiceImpl implements ItemService {
         log.info("Коммент оставлен пользователем с id " + userId + " для вещи с id " + itemId);
         return toCommentDto(comment);
     }
-
 }
