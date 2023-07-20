@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -17,16 +18,12 @@ import java.util.Collection;
  * TODO Sprint add-controllers.
  */
 @Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
-
     @Autowired
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public Collection<UserDto> getAll() {
