@@ -12,12 +12,16 @@ import ru.practicum.shareit.item.CommentMapper;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.utils.CommonUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,18 +38,19 @@ import static ru.practicum.shareit.item.ItemMapper.toItemDto;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 @AllArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final CommentRepository commentRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<ItemDto> getAll(Long userId) {
-        List<Item> ownerItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+    public List<ItemDto> getAll(Long userId, int from, int size) {
+        List<Item> ownerItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, CommonUtils.getPageRequest(from, size));
         List<ItemDto> ownerItemDtoList = ownerItems
                 .stream()
                 .map(ItemMapper::toItemDto)
@@ -68,7 +73,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ItemDto getById(Long id, Long userId) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Вещь с id {} не найдена", id)));
@@ -92,18 +96,23 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto add(ItemDto itemDto, Long userId) {
+    public ItemDto add(ItemRequestDto itemRequestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id {} не существует" + userId)));
-        Item item = toItem(itemDto);
+        Item item = toItem(itemRequestDto);
         item.setOwner(user);
+        if (itemRequestDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemRequestDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException(String.format("Реквест с id {} не найден", itemRequestDto.getRequestId())));
+            item.setRequest(itemRequest);
+        }
         itemRepository.save(item);
         return toItemDto(item);
     }
 
     @Override
     @Transactional
-    public ItemDto update(ItemDto itemDto, Long id, Long userId) {
+    public ItemDto update(ItemRequestDto itemDto, Long id, Long userId) {
         Item founded = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + id));
         if (founded.getOwner() != null && !userId.equals(founded.getOwner().getId())) {
@@ -127,17 +136,18 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public void delete(Long id) {
+        Item founded = itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id: " + id));
         itemRepository.deleteById(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, int from, int size) {
         List<ItemDto> founded = new ArrayList<>();
         if (text.isBlank()) {
             return founded;
         }
-        return itemRepository.search(text)
+        return itemRepository.search(text, CommonUtils.getPageRequest(from, size))
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(toList());
@@ -162,5 +172,4 @@ public class ItemServiceImpl implements ItemService {
         log.info("Коммент оставлен пользователем с id " + userId + " для вещи с id " + itemId);
         return toCommentDto(comment);
     }
-
 }

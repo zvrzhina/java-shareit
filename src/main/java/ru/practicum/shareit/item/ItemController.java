@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -7,10 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -19,18 +23,17 @@ import java.util.List;
 @Slf4j
 @RestController
 @Validated
+@AllArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
 
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
-
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Получен запрос GET /items");
-        return itemService.getAll(userId);
+        return itemService.getAll(userId, from, size);
     }
 
     @GetMapping("/{id}")
@@ -41,7 +44,7 @@ public class ItemController {
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId, Errors errors) {
+    public ItemDto create(@Valid @RequestBody ItemRequestDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId, Errors errors) {
         log.info("Получен запрос POST /items");
         if (errors.hasErrors()) {
             throw new ValidationException("Произошла ошибка валидации - " + errors.getAllErrors());
@@ -51,7 +54,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemDto update(@Valid @RequestBody ItemDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto update(@Valid @RequestBody ItemRequestDto itemDto, @PathVariable Long id, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос PATCH /items/id");
         return itemService.update(itemDto, id, userId);
     }
@@ -63,9 +66,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text) {
+    public List<ItemDto> search(@RequestParam String text,
+                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Получен запрос PATCH /items/search");
-        return itemService.search(text);
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
